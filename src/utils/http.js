@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-// axios.default.baseUrl = 'http://ding-api.study.com/'
 const http = axios.create({
   baseURL: '/api/',
   timeout: 30000,
@@ -16,7 +15,7 @@ export default {
         params: params
       }).then(res => {
         // deal success
-        console.log('success', res)
+        // console.log('success', res)
         resolve(res.data.data)
       }).catch(err => {
         // deal error

@@ -2,25 +2,44 @@
   <div>
     <div>
       <div>
+        <span>现价：</span>
         <span>
-          <el-select v-model="filter_option" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="price_operator" placeholder="请选择">
+            <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </span>
         <span>
-          <el-select v-model="operator" placeholder="请选择">
-            <el-option v-for="item in operatorOptions" :key="item.value" :label="item.label" :value="item.value">
+          <el-input v-model="price_num" placeholder="请输入内容" style="width: 150px"></el-input>
+        </span>
+      </div>
+      <div>
+        <span>溢价率：</span>
+        <span>
+          <el-select v-model="premium_rt_operator" placeholder="请选择">
+            <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </span>
         <span>
-          <el-input v-model="input_num" placeholder="请输入内容" style="width: 150px"></el-input>
+          <el-input v-model="premium_rt_num" placeholder="请输入内容" style="width: 150px"></el-input>
+        </span>
+      </div>
+      <div>
+        <span>剩余规模：</span>
+        <span>
+          <el-select v-model="curr_iss_amt_operator" placeholder="请选择">
+            <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </span>
+        <span>
+          <el-input v-model="curr_iss_amt_num" placeholder="请输入内容" style="width: 150px"></el-input>
         </span>
       </div>
       <div>
         <span>到期时间：</span>
-        <el-date-picker v-model="maturity_date" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
+        <el-date-picker v-model="maturity_date" type="daterange" align="right" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd">
         </el-date-picker>
       </div>
       <div>
@@ -63,11 +82,11 @@
         </el-table-column>
         <el-table-column label="名称" prop="bond_nm">
         </el-table-column>
-        <el-table-column label="现价" prop="price" sortable>
+        <el-table-column label="现价" prop="price" sortable :sort-method="(a,b) => a.price - b.price">
         </el-table-column>
-        <el-table-column label="溢价率" prop="premium_rt" sortable>
+        <el-table-column label="溢价率" prop="premium_rt" sortable :sort-method="(a,b) => parseFloat(a.premium_rt) - parseFloat(b.premium_rt)">
         </el-table-column>
-        <el-table-column label="双低" prop="dblow" sortable>
+        <el-table-column label="双低" prop="dblow" sortable :sort-method="(a,b) => a.dblow - b.dblow">
         </el-table-column>
         <el-table-column label="到期时间" prop="maturity_dt">
         </el-table-column>
@@ -99,6 +118,7 @@ export default {
   data () {
     return {
       tableData: [],
+      tableDataAll: [], // 备份接口返回值，筛选使用
       pickerOptions: {
         shortcuts: [{
           text: '下周',
@@ -126,59 +146,74 @@ export default {
           }
         }]
       },
-      options: [{
-        value: 'price',
-        label: '现价'
-      }, {
-        value: 'premium_rt',
-        label: '溢价率'
-      }, {
-        value: 'curr_iss_amt',
-        label: '剩余规模'
-      }],
-      operatorOptions: [{
-        value: 'lt',
+      operator: [{
+        value: '<',
         label: '<'
       }, {
-        value: 'lt_et',
+        value: '<=',
         label: '<='
       }, {
-        value: 'et',
+        value: '=',
         label: '='
       }, {
-        value: 'gt_et',
+        value: '>=',
         label: '>='
       }, {
-        value: 'gt',
+        value: '>',
         label: '>'
       }],
       search_text: '', // 搜索框文本
       maturity_date: '', // 日期插件
-      filter_option: '', // 搜索选项options
-      operator: '', // 搜索条件（> = <）
-      input_num: '' // 搜索内容
+      price_operator: '', // 搜索条件（> = <）
+      price_num: '', // 价格
+      premium_rt_operator: '', // 搜索条件（> = <）
+      premium_rt_num: '', // 溢价率
+      curr_iss_amt_operator: '', // 搜索条件（> = <）
+      curr_iss_amt_num: '' // 剩余规模
     }
   },
   methods: {
     // 获取可转债列表数据
     getKzzList () {
-      // console.log('getKzzList', this.$api)
-       this.$api.lowRiskStrategy().then(res => {
-          console.log(res)
-          this.tableData = res
-       })
+      this.$api.lowRiskStrategy().then(res => {
+        // console.log(res)
+        this.tableData = this.tableDataAll = res
+      })
     },
     // 筛选可转债数据
     kzzFilter () {
-      console.log(this.maturity_date[0])
-      console.log(this.maturity_date[1])
+      const _this = this
+      this.tableData = this.tableDataAll
+      // 搜索框（转债代码 和 名称）
+      if (this.search_text) {
+        // 暂时直接在table上直接筛选
+      }
+      // 转债价格
+      if (this.price_operator && this.price_num) {
+        this.tableData = this.tableData.filter(({price}) => eval(price + _this.price_operator + _this.price_num))
+      }
+      // 转债溢价率
+      if (this.premium_rt_operator && this.premium_rt_num) {
+        this.tableData = this.tableData.filter(({premium_rt}) => eval(parseFloat(premium_rt) + _this.premium_rt_operator + parseFloat(_this.premium_rt_num)))
+      }
+      // 转债剩余规模
+      if (this.curr_iss_amt_operator && this.curr_iss_amt_num) {
+        this.tableData = this.tableData.filter(({curr_iss_amt}) => eval(curr_iss_amt + _this.curr_iss_amt_operator + _this.curr_iss_amt_num))
+      }
+      // 转债到期时间筛选
+      if (this.maturity_date) {
+        let start_time = this.maturity_date[0]
+        let end_time = this.maturity_date[1]
+        console.log(start_time)
+        console.log(end_time)
+        this.tableData = this.tableData.filter(({maturity_dt}) => maturity_dt > start_time && maturity_dt < end_time)
+      }
+
     }
   },
   created () {
-    console.log('created')
     this.getKzzList()
   }
-
 }
 
 </script>
