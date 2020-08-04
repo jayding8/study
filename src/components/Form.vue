@@ -1,56 +1,56 @@
 <template>
-  <div>
+  <div style="padding: 0px 100px">
     <div>
-      <div>
-        <span>现价：</span>
-        <span>
-          <el-select v-model="price_operator" placeholder="请选择">
-            <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </span>
-        <span>
-          <el-input v-model="price_num" placeholder="请输入内容" style="width: 150px"></el-input>
-        </span>
-      </div>
-      <div>
-        <span>溢价率：</span>
-        <span>
-          <el-select v-model="premium_rt_operator" placeholder="请选择">
-            <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </span>
-        <span>
-          <el-input v-model="premium_rt_num" placeholder="请输入内容" style="width: 150px"></el-input>
-        </span>
-      </div>
-      <div>
-        <span>剩余规模：</span>
-        <span>
-          <el-select v-model="curr_iss_amt_operator" placeholder="请选择">
-            <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </span>
-        <span>
-          <el-input v-model="curr_iss_amt_num" placeholder="请输入内容" style="width: 150px"></el-input>
-        </span>
-      </div>
-      <div>
-        <span>到期时间：</span>
-        <el-date-picker v-model="maturity_date" type="daterange" align="right" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd">
-        </el-date-picker>
-      </div>
-      <div>
+      <div class="common-search">
+        <el-input v-model="search_text" placeholder="输入关键字搜索" />
         <el-button type="primary" @click="kzzFilter()">筛选</el-button>
       </div>
-      <div>
-        <el-input style="width: 150px" v-model="search_text" size="mini" placeholder="输入关键字搜索" />
+      <div class="advanced-search">
+        <div>
+          <span class="title">现价：</span>
+          <span>
+            <el-select v-model="price_operator" placeholder="请选择">
+              <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </span>
+          <span>
+            <el-input v-model="price_num" placeholder="请输入内容" style="width: 150px"></el-input>
+          </span>
+        </div>
+        <div>
+          <span class="title">溢价率：</span>
+          <span>
+            <el-select v-model="premium_rt_operator" placeholder="请选择">
+              <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </span>
+          <span>
+            <el-input v-model="premium_rt_num" placeholder="请输入内容" style="width: 150px"></el-input>
+          </span>
+        </div>
+        <div>
+          <span class="title">剩余规模：</span>
+          <span>
+            <el-select v-model="curr_iss_amt_operator" placeholder="请选择">
+              <el-option v-for="item in operator" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </span>
+          <span>
+            <el-input v-model="curr_iss_amt_num" placeholder="请输入内容" style="width: 150px"></el-input>
+          </span>
+        </div>
+        <div>
+          <span class="title">到期时间：</span>
+          <el-date-picker v-model="maturity_date" type="daterange" align="right" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </div>
       </div>
     </div>
     <div>
-      <el-table :data="tableData.filter(data => !search_text || data.bond_id.toLowerCase().includes(search_text.toLowerCase()) || data.bond_nm.toLowerCase().includes(search_text.toLowerCase()))" style="width: 100%">
+      <el-table height="800px" :data="tableData" style="width: 100%;">
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -110,6 +110,26 @@
   margin-right: 0;
   margin-bottom: 0;
   width: 50%;
+}
+
+.common-search {
+  display: flex;
+  width: 1000px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.advanced-search {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 200px;
+}
+
+.advanced-search .title {
+  display: inline-block;
+  width: 88px;
 }
 
 </style>
@@ -186,7 +206,7 @@ export default {
       this.tableData = this.tableDataAll
       // 搜索框（转债代码 和 名称）
       if (this.search_text) {
-        // 暂时直接在table上直接筛选
+        this.tableData = this.tableData.filter(data => data.bond_id.toLowerCase().includes(this.search_text.toLowerCase()) || data.bond_nm.toLowerCase().includes(this.search_text.toLowerCase()))
       }
       // 转债价格
       if (this.price_operator && this.price_num) {
@@ -204,11 +224,8 @@ export default {
       if (this.maturity_date) {
         let start_time = this.maturity_date[0]
         let end_time = this.maturity_date[1]
-        console.log(start_time)
-        console.log(end_time)
         this.tableData = this.tableData.filter(({maturity_dt}) => maturity_dt > start_time && maturity_dt < end_time)
       }
-
     }
   },
   created () {
