@@ -16,7 +16,7 @@ export default {
       }).then(res => {
         // deal success
         // console.log('success', res)
-        resolve(res.data.data)
+        resolve(res.data)
       }).catch(err => {
         // deal error
         console.log('error', err)
@@ -31,8 +31,8 @@ export default {
         params: params
       }).then(res => {
         // deal success
-        console.log(res)
-        resolve(res)
+        // console.log(res)
+        resolve(res.data)
       }).catch(err => {
         // deal error
         console.log(err)
