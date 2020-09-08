@@ -1,15 +1,34 @@
 <template>
   <div id="app">
-    <router-view/>
+    <header-view v-if="show_header"></header-view>
+    <router-view  @publicShow='publicShow' />
+    <footer-view v-if="show_footer"></footer-view>
   </div>
 </template>
-
 <script>
+import headerView from '@/components/Header'
+import footerView from '@/components/Footer'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    headerView,
+    footerView
+  },
+  data () {
+    return {
+      show_header: true,
+      show_footer: true
+    }
+  },
+  methods: {
+    publicShow (boll) {
+      this.show_header = boll
+      this.show_footer = boll
+    }
+  }
 }
-</script>
 
+</script>
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -17,6 +36,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /*margin-top: 60px;*/
+}
+
+a {
+  text-decoration: none;
 }
 </style>
