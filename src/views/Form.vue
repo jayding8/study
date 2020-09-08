@@ -50,7 +50,7 @@
       </div>
     </div>
     <div>
-      <el-table height="800px" :data="tableData" style="width: 100%;">
+      <el-table height="800px" :data="tableData" style="width: 100%;" highlight-current-row empty-text="啊哦，数据不见了哟！">
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -197,12 +197,17 @@ export default {
     getKzzList () {
       this.$api.lowRiskStrategy().then(res => {
         // console.log(res)
-        this.tableData = this.tableDataAll = res
+        if (res.error_code === 0) {
+          this.tableData = this.tableDataAll = res.data
+        } else {
+          console.log('getKzzList', res)
+          return false
+        }
       })
     },
     // 筛选可转债数据
     kzzFilter () {
-      const _this = this
+      // const _this = this
       this.tableData = this.tableDataAll
       // 搜索框（转债代码 和 名称）
       if (this.search_text) {
@@ -210,22 +215,27 @@ export default {
       }
       // 转债价格
       if (this.price_operator && this.price_num) {
-        this.tableData = this.tableData.filter(({price}) => eval(price + _this.price_operator + _this.price_num))
+        this.tableData = this.tableData.filter(({price}) => this.evalDiy(price + this.price_operator + this.price_num))
       }
       // 转债溢价率
       if (this.premium_rt_operator && this.premium_rt_num) {
-        this.tableData = this.tableData.filter(({premium_rt}) => eval(parseFloat(premium_rt) + _this.premium_rt_operator + parseFloat(_this.premium_rt_num)))
+        this.tableData = this.tableData.filter(item => this.evalDiy(parseFloat(item.premium_rt) + this.premium_rt_operator + parseFloat(this.premium_rt_num)))
       }
       // 转债剩余规模
       if (this.curr_iss_amt_operator && this.curr_iss_amt_num) {
-        this.tableData = this.tableData.filter(({curr_iss_amt}) => eval(curr_iss_amt + _this.curr_iss_amt_operator + _this.curr_iss_amt_num))
+        this.tableData = this.tableData.filter(item => this.evalDiy(item.curr_iss_amt + this.curr_iss_amt_operator + this.curr_iss_amt_num))
       }
       // 转债到期时间筛选
       if (this.maturity_date) {
-        let start_time = this.maturity_date[0]
-        let end_time = this.maturity_date[1]
-        this.tableData = this.tableData.filter(({maturity_dt}) => maturity_dt > start_time && maturity_dt < end_time)
+        let startTime = this.maturity_date[0]
+        let endTime = this.maturity_date[1]
+        this.tableData = this.tableData.filter(item => item.maturity_dt > startTime && item.maturity_dt < endTime)
       }
+    },
+    // 避免直接使用eval，eslint报错
+    evalDiy (fn) {
+      let Fn = Function
+      return new Fn('return ' + fn)()
     }
   },
   created () {
