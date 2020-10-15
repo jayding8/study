@@ -67,7 +67,7 @@ export default {
     }
   },
   created () {
-    this.$emit('publicShow', false)
+    // this.$emit('publicShow', false)
   }
 }
 
@@ -75,11 +75,12 @@ export default {
 <style>
 .login {
   width: 100%;
-  height: 100%;
+  height: 70%;
+  min-height: 800px;
   background: url(../assets/images/bgLogin.png) no-repeat 50%;
   background-size: cover;
   background-color: #000;
-  position: fixed;
+  /*position: fixed;*/
   display: flex;
   justify-content: center;
   align-items: center;

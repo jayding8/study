@@ -1,32 +1,30 @@
 <template>
-  <div>
-    <div class="header">
-      <div class="header-left">
-        <router-link to='/'>
-          <img src="../assets/images/jayding.png" alt="">
-        </router-link>
-      </div>
-      <div class="header-middle">
-        <div><router-link to='form'>可转债</router-link></div>
-      </div>
-      <div class="header-right">
-        <el-dropdown v-if="userInfo && userInfo.access_token" @command="handleCommand">
-          <span class="el-dropdown-link">
-            <img v-if="userInfo && userInfo.avatar" :src="userInfo.avatar" :alt="userInfo.name">
-            <img v-else src="../assets/images/logo.png" alt="用户信息">
-            <i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="home">{{userInfo.name}}</el-dropdown-item>
-            <!-- <el-dropdown-item command="d" disabled>双皮奶</el-dropdown-item> -->
-            <el-dropdown-item command="loginout" divided>退出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <div v-else>
-          <el-button type="primary" size="mini" @click="goLogin">登录</el-button>
-          <!-- <el-button type="primary" size="mini" @click="register">注册</el-button> -->
-          <el-button type="info" size="mini" @click="register">注册</el-button>
-        </div>
+  <div class="header">
+    <div class="header-left">
+      <router-link to='/'>
+        <img src="../assets/images/jayding.png" alt="">
+      </router-link>
+    </div>
+    <div class="header-middle">
+      <div><router-link to='form'>可转债</router-link></div>
+    </div>
+    <div class="header-right">
+      <el-dropdown v-if="userInfo && userInfo.access_token" @command="handleCommand">
+        <span class="el-dropdown-link">
+          <img v-if="userInfo && userInfo.avatar" :src="userInfo.avatar" :alt="userInfo.name">
+          <img v-else src="../assets/images/logo.png" alt="用户信息">
+          <i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="home">{{userInfo.name}}</el-dropdown-item>
+          <!-- <el-dropdown-item command="d" disabled>双皮奶</el-dropdown-item> -->
+          <el-dropdown-item command="loginout" divided>退出</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <div v-else>
+        <el-button type="primary" size="mini" @click="goLogin">登录</el-button>
+        <!-- <el-button type="primary" size="mini" @click="register">注册</el-button> -->
+        <el-button type="info" size="mini" @click="register">注册</el-button>
       </div>
     </div>
   </div>
@@ -72,7 +70,7 @@ export default {
   /*background-color: rgb(10, 80, 180);*/
   background-color: #00bfff;
   display: flex;
-  margin-bottom: 8px;
+  /*margin-bottom: 8px;*/
 }
 
 .header .header-left {
@@ -89,7 +87,7 @@ export default {
 }
 
 .header .header-middle {
-  width: 80%;
+  width: 70%;
   color: #fff;
   display: flex;
   align-items: center;
@@ -97,7 +95,7 @@ export default {
 }
 
 .header .header-right {
-  width: 10%;
+  width: 20%;
   height: 100%;
   display: flex;
   justify-content: center;
