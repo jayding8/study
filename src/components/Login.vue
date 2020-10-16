@@ -75,7 +75,7 @@ export default {
 <style>
 .login {
   width: 100%;
-  height: 70%;
+  height: calc(100% - 66px - 100px);
   background: url(../assets/images/bgLogin.png) no-repeat 50%;
   background-size: cover;
   background-color: #000;

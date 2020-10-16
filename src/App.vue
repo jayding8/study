@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header-view v-if="show_header"></header-view>
-    <router-view  @publicShow='publicShow' />
+    <router-view @publicShow='publicShow' />
     <footer-view v-if="show_footer"></footer-view>
   </div>
 </template>
@@ -40,7 +40,12 @@ export default {
   height: 100%;
 }
 
+::-webkit-scrollbar {
+  /*display: none;*/
+}
+
 a {
   text-decoration: none;
 }
+
 </style>
