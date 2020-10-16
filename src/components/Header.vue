@@ -1,12 +1,10 @@
 <template>
   <div class="header">
     <div class="header-left">
-      <router-link to='/'>
-        <img src="../assets/images/jayding.png" alt="">
-      </router-link>
+      <img src="../assets/images/jayding.png" alt="" @click="() => $router.push('/')">
     </div>
     <div class="header-middle">
-      <div><router-link to='form'>可转债</router-link></div>
+      <div class="header-middle-item" @click="() => $router.push('Form')">可转债</div>
     </div>
     <div class="header-right">
       <el-dropdown v-if="userInfo && userInfo.access_token" @command="handleCommand">
@@ -67,10 +65,10 @@ export default {
 .header {
   width: 100%;
   height: 66px;
-  /*background-color: rgb(10, 80, 180);*/
-  background-color: #00bfff;
+  background-color: rgb(10, 80, 180);
+  /*background-color: #00bfff;*/
   display: flex;
-  /*margin-bottom: 8px;*/
+  color: #fff;
 }
 
 .header .header-left {
@@ -84,6 +82,7 @@ export default {
 .header .header-left img {
   width: 50px;
   height: 50px;
+  cursor: pointer;
 }
 
 .header .header-middle {
@@ -92,6 +91,10 @@ export default {
   display: flex;
   align-items: center;
   font-size: 20px;
+}
+
+.header .header-middle .header-middle-item {
+  cursor: pointer;
 }
 
 .header .header-right {

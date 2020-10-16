@@ -41,7 +41,7 @@ export default {
 }
 
 ::-webkit-scrollbar {
-  /*display: none;*/
+  display: none;
 }
 
 a {
