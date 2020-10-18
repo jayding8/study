@@ -31,7 +31,6 @@
 export default {
   data () {
     return {
-      login: 1,
       userInfo: this.$cookies.get('userInfo')
     }
   },

@@ -55,9 +55,9 @@ export default {
               this.$message({
                 message: '登陆成功',
                 type: 'success'
-              });
+              })
               this.$router.back()
-              location.href = location.href
+              // location.href = location.href
             } else {
               this.$message.error(res.error_code + ':' + res.error_message)
             }

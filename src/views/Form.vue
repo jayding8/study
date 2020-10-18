@@ -1,11 +1,15 @@
 <template>
-  <div style="padding: 0px 100px">
-    <div>
+  <div class="form">
+    <div class="form-search">
       <div class="common-search">
-        <el-input v-model="search_text" placeholder="输入关键字搜索" />
+        <el-input v-model="search_text" placeholder="输入{代码}或{名称}搜索" />
         <el-button type="primary" @click="kzzFilter()">筛选</el-button>
+        <div v-if="userInfo && userInfo.access_token" class="advanced-search-buttun" @click='showAdvancedSearch'>
+          <span v-text="show_advanced_search ? '收起高级搜索' : '展开高级搜索'"></span>
+          <span :class="show_advanced_search ? 'iconUp' : 'iconDown'"></span>
+        </div>
       </div>
-      <div class="advanced-search">
+      <div class="advanced-search" v-if='show_advanced_search'>
         <div>
           <span class="title">现价：</span>
           <span>
@@ -49,7 +53,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="form-list">
       <el-table height="800px" :data="tableData" style="width: 100%;" highlight-current-row empty-text="啊哦，数据不见了哟！">
         <el-table-column type="expand">
           <template slot-scope="props">
@@ -96,43 +100,6 @@
     </div>
   </div>
 </template>
-<style>
-.demo-table-expand {
-  font-size: 0;
-}
-
-.demo-table-expand label {
-  width: 90px;
-  color: #99a9bf;
-}
-
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 50%;
-}
-
-.common-search {
-  display: flex;
-  width: 1000px;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.advanced-search {
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    height: 200px;
-}
-
-.advanced-search .title {
-  display: inline-block;
-  width: 88px;
-}
-
-</style>
 <script>
 export default {
   data () {
@@ -182,6 +149,8 @@ export default {
         value: '>',
         label: '>'
       }],
+      userInfo: this.$cookies.get('userInfo'),
+      show_advanced_search: 0,
       search_text: '', // 搜索框文本
       maturity_date: '', // 日期插件
       price_operator: '', // 搜索条件（> = <）
@@ -232,6 +201,9 @@ export default {
         this.tableData = this.tableData.filter(item => item.maturity_dt > startTime && item.maturity_dt < endTime)
       }
     },
+    showAdvancedSearch () {
+      this.show_advanced_search = this.show_advanced_search ? 0 : 1
+    },
     // 避免直接使用eval，eslint报错
     evalDiy (fn) {
       let Fn = Function
@@ -244,3 +216,85 @@ export default {
 }
 
 </script>
+
+<style>
+.form {
+  width: 100%;
+  /*height: calc(100% - 66px - 100px)*/
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px 0;
+}
+
+.form .form-search {
+  width: 80%;
+  margin-bottom: 15px;
+}
+
+.form .form-list {
+  width: 100%;
+}
+
+.demo-table-expand {
+  font-size: 0;
+}
+
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+}
+
+.common-search {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.common-search .advanced-search-buttun {
+  width: 15%;
+  cursor: pointer;
+}
+
+.common-search .advanced-search-buttun .iconDown {
+    cursor: pointer;
+    margin-left: 12px;
+    display: inline-block;
+    background-size: contain;
+    width: 10px;
+    height: 10px;
+    background: url(../assets/images/down.png) center center no-repeat;
+}
+
+.common-search .advanced-search-buttun .iconUp {
+    cursor: pointer;
+    margin-left: 12px;
+    display: inline-block;
+    background-size: contain;
+    width: 10px;
+    height: 10px;
+    background: url(../assets/images/up.png) center center no-repeat;
+}
+
+.advanced-search {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 200px;
+}
+
+.advanced-search .title {
+  display: inline-block;
+  width: 88px;
+}
+
+</style>
