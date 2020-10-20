@@ -108,7 +108,7 @@ export default {
       tableDataAll: [], // 备份接口返回值，筛选使用
       pickerOptions: {
         shortcuts: [{
-          text: '下周',
+          text: '一周内',
           onClick (picker) {
             const end = new Date()
             const start = new Date()
@@ -116,7 +116,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '下个月',
+          text: '一月内',
           onClick (picker) {
             const end = new Date()
             const start = new Date()
@@ -124,11 +124,27 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '下三个月',
+          text: '一年内',
           onClick (picker) {
             const end = new Date()
             const start = new Date()
-            end.setTime(end.getTime() + 3600 * 1000 * 24 * 90)
+            end.setTime(end.getTime() + 3600 * 1000 * 24 * 365)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '三年内',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(end.getTime() + 3600 * 1000 * 24 * 365 * 3)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '五年内',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(end.getTime() + 3600 * 1000 * 24 * 365 * 5)
             picker.$emit('pick', [start, end])
           }
         }]
@@ -169,6 +185,7 @@ export default {
         if (res.error_code === 0) {
           this.tableData = this.tableDataAll = res.data
         } else {
+          this.$message.error(res.error_code + ':' + res.error_message)
           console.log('getKzzList', res)
           return false
         }
