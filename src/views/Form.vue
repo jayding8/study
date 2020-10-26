@@ -88,6 +88,11 @@
         </el-table-column>
         <el-table-column label="现价" prop="price" sortable :sort-method="(a,b) => a.price - b.price">
         </el-table-column>
+        <el-table-column label="涨跌幅" prop="increase_rt">
+          <template slot-scope="scope">
+            <span :class="parseFloat(scope.row.increase_rt) > 0 ? 'up' : parseFloat(scope.row.increase_rt) < 0 ? 'down' : 'empty'">{{scope.row.increase_rt}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="溢价率" prop="premium_rt" sortable :sort-method="(a,b) => parseFloat(a.premium_rt) - parseFloat(b.premium_rt)">
         </el-table-column>
         <el-table-column label="双低" prop="dblow" sortable :sort-method="(a,b) => a.dblow - b.dblow">
@@ -95,6 +100,12 @@
         <el-table-column label="到期时间" prop="maturity_dt">
         </el-table-column>
         <el-table-column label="剩余规模" prop="curr_iss_amt">
+        </el-table-column>
+        <el-table-column label="操作" v-if="userInfo && userInfo.access_token">
+          <template slot-scope="scope">
+            <span title="自选" @click="userOptional(scope.$index, scope.row, {op_id:2, status_key:'user_optional', op_name:'自选'})" :class="scope.row.user_optional ? 'el-icon-remove' : 'el-icon-circle-plus-outline'"></span>
+            <span title="黑名单" @click="userOptional(scope.$index, scope.row, {op_id:3, status_key:'user_black', op_name:'黑名单'})" :class="scope.row.user_black ? 'el-icon-document-delete' : 'el-icon-document'"></span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -221,6 +232,33 @@ export default {
     showAdvancedSearch () {
       this.show_advanced_search = this.show_advanced_search ? 0 : 1
     },
+    userOptional (index, row, op) {
+      if (row[op.status_key]) {
+        // 删除自选、黑名单
+        let params = {op_id: op.op_id, types: row.bond_id, type_names: row.bond_nm}
+        this.$api.delLogs(params).then(res => {
+          if (res.error_code === 0) {
+            this.tableData[index][op.status_key] = 0
+            this.$message({showClose: true, type: 'success', message: '删除' + op.op_name + '成功'})
+          } else {
+            this.$message({showClose: true, type: 'error', message: res.error_message})
+            return false
+          }
+        })
+      } else {
+        // 加入自选、黑名单
+        let params = {op_id: op.op_id, op_name: op.op_name, type: row.bond_id, type_name: row.bond_nm}
+        this.$api.addLogs(params).then(res => {
+          if (res.error_code === 0) {
+            this.tableData[index][op.status_key] = 1
+            this.$message({showClose: true, type: 'success', message: '添加' + op.op_name + '成功'})
+          } else {
+            this.$message({showClose: true, type: 'error', message: res.error_message})
+            return false
+          }
+        })
+      }
+    },
     // 避免直接使用eval，eslint报错
     evalDiy (fn) {
       let Fn = Function
@@ -252,6 +290,18 @@ export default {
 
 .form .form-list {
   width: 100%;
+}
+
+.form .form-list .up {
+  color: red;
+}
+
+.form .form-list .down{
+  color: green;
+}
+
+.form .form-list .empty{
+  color: grey;
 }
 
 .demo-table-expand {

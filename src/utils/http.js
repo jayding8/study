@@ -38,6 +38,22 @@ export default {
         console.log(err)
       })
     })
+  },
+  delete (url, params) {
+    return new Promise((resolve, reject) => {
+      http({
+        method: 'delete',
+        url,
+        params: params
+      }).then(res => {
+        // deal success
+        // console.log(res)
+        resolve(res.data)
+      }).catch(err => {
+        // deal error
+        console.log(err)
+      })
+    })
   }
 
 }
