@@ -51,10 +51,14 @@
           <el-date-picker v-model="maturity_date" type="daterange" align="right" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd">
           </el-date-picker>
         </div>
+        <div>
+          <span class="title">已上市：</span>
+          <el-checkbox v-model="listed">已上市</el-checkbox>
+        </div>
       </div>
     </div>
     <div class="form-list">
-      <el-table height="800px" :data="tableData" style="width: 100%;" highlight-current-row empty-text="啊哦，数据不见了哟！">
+      <el-table height="800px" :data="tableData" :row-class-name="({row, rowIndex}) => row.user_black ? 'user-black' : 'empty'" highlight-current-row empty-text="啊哦，数据不见了哟！">
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -64,42 +68,49 @@
               <el-form-item label="名称">
                 <span>{{ props.row.bond_nm }}</span>
               </el-form-item>
-              <el-form-item label="现价">
-                <span>{{ props.row.price }}</span>
+              <el-form-item label="正股代码">
+                <span>{{ props.row.stock_cd }}</span>
               </el-form-item>
-              <el-form-item label="溢价率">
-                <span>{{ props.row.premium_rt }}</span>
+              <el-form-item label="正股">
+                <span>{{ props.row.stock_nm }}</span>
               </el-form-item>
-              <el-form-item label="双低">
-                <span>{{ props.row.dblow }}</span>
+              <el-form-item label="正股涨跌">
+                <span>{{ props.row.sincrease_rt }}</span>
               </el-form-item>
-              <el-form-item label="到期时间">
-                <span>{{ props.row.maturity_dt }}</span>
+              <el-form-item label="转股价">
+                <span>{{ props.row.convert_price }}</span>
               </el-form-item>
-              <el-form-item label="剩余规模">
-                <span>{{ props.row.curr_iss_amt }}</span>
+              <el-form-item label="转股价值">
+                <span>{{ props.row.convert_value }}</span>
               </el-form-item>
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column label="代码" prop="bond_id">
+        <el-table-column label="代码" prop="bond_id" sortable>
         </el-table-column>
-        <el-table-column label="名称" prop="bond_nm">
+        <el-table-column label="名称" prop="bond_nm" sortable>
+          <template slot-scope="scope">
+            <span :class="scope.row.user_optional ? 'red' : 'empty'">{{scope.row.bond_nm}}</span>
+          </template>
         </el-table-column>
         <el-table-column label="现价" prop="price" sortable :sort-method="(a,b) => a.price - b.price">
         </el-table-column>
-        <el-table-column label="涨跌幅" prop="increase_rt">
+        <el-table-column label="涨跌幅" prop="increase_rt" sortable :sort-method="(a,b) => parseFloat(a.increase_rt) - parseFloat(b.increase_rt)">
           <template slot-scope="scope">
-            <span :class="parseFloat(scope.row.increase_rt) > 0 ? 'up' : parseFloat(scope.row.increase_rt) < 0 ? 'down' : 'empty'">{{scope.row.increase_rt}}</span>
+            <span :class="parseFloat(scope.row.increase_rt) > 0 ? 'red' : parseFloat(scope.row.increase_rt) < 0 ? 'green' : 'empty'">{{scope.row.increase_rt}}</span>
           </template>
         </el-table-column>
         <el-table-column label="溢价率" prop="premium_rt" sortable :sort-method="(a,b) => parseFloat(a.premium_rt) - parseFloat(b.premium_rt)">
         </el-table-column>
         <el-table-column label="双低" prop="dblow" sortable :sort-method="(a,b) => a.dblow - b.dblow">
         </el-table-column>
-        <el-table-column label="到期时间" prop="maturity_dt">
+        <el-table-column label="剩余(亿元)" prop="curr_iss_amt" sortable :sort-method="(a,b) => a.curr_iss_amt - b.curr_iss_amt">
         </el-table-column>
-        <el-table-column label="剩余规模" prop="curr_iss_amt">
+        <el-table-column label="成交(万元)" prop="volume" sortable :sort-method="(a,b) => a.volume - b.volume">
+        </el-table-column>
+        <el-table-column label="换手率" prop="turnover_rt" sortable :sort-method="(a,b) => a.turnover_rt - b.turnover_rt">
+        </el-table-column>
+        <el-table-column label="到期时间" prop="maturity_dt" sortable>
         </el-table-column>
         <el-table-column label="操作" v-if="userInfo && userInfo.access_token">
           <template slot-scope="scope">
@@ -179,6 +190,7 @@ export default {
       userInfo: this.$cookies.get('userInfo'),
       show_advanced_search: 0,
       search_text: '', // 搜索框文本
+      listed: false, // 是否已上市
       maturity_date: '', // 日期插件
       price_operator: '', // 搜索条件（> = <）
       price_num: '', // 价格
@@ -206,6 +218,10 @@ export default {
     kzzFilter () {
       // const _this = this
       this.tableData = this.tableDataAll
+      // 是否已上市 或者 price_tips: "待上市"
+      if (this.listed) {
+        this.tableData = this.tableData.filter(item => item.last_time !== null)
+      }
       // 搜索框（转债代码 和 名称）
       if (this.search_text) {
         this.tableData = this.tableData.filter(data => data.bond_id.toLowerCase().includes(this.search_text.toLowerCase()) || data.bond_nm.toLowerCase().includes(this.search_text.toLowerCase()))
@@ -292,16 +308,20 @@ export default {
   width: 100%;
 }
 
-.form .form-list .up {
-  color: red;
+.form .form-list .red {
+  color: #ff0000;
 }
 
-.form .form-list .down{
-  color: green;
+.form .form-list .green{
+  color: #008000;
 }
 
 .form .form-list .empty{
-  color: grey;
+  /*color: #606266;*/
+}
+
+.form .form-list .user-black{
+  background-color: #dde1e8a6;
 }
 
 .demo-table-expand {
