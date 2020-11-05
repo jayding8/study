@@ -297,6 +297,7 @@ export default {
   flex-direction: column;
   align-items: center;
   margin: 30px 0;
+  background: #f8f8f8;
 }
 
 .form .form-search {
