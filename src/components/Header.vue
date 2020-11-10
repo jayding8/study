@@ -44,7 +44,6 @@ export default {
           location.href = location.href
           break
         case 'home':
-          this.$message('click on item ' + command)
           this.$router.push('home')
           break
       }
