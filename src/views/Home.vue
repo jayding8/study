@@ -162,7 +162,7 @@ export default {
 
 <style>
   .home {
-    height: calc(100% - 66px - 100px);
+    min-height: calc(100% - 66px - 100px);
     background: #f8f8f8;
     padding: 20px;
   }
