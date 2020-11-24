@@ -41,7 +41,7 @@ export default {
       switch (command) {
         case 'loginout':
           this.$cookies.remove('userInfo')
-          location.href = location.href
+          this.$router.go(0)
           break
         case 'home':
           this.$router.push('home')

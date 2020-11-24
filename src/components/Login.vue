@@ -51,12 +51,12 @@ export default {
         if (valid) {
           this.$api.login({name: this.ruleForm.name, password: this.ruleForm.pass}).then(res => {
             if (res.error_code === 0) {
-              this.$cookies.set('userInfo', res.data, '7d')
+              this.$cookies.set('userInfo', res.data, 60 * 60 * 2)
               this.$message({
                 message: '登陆成功',
                 type: 'success'
               })
-              this.$router.back()
+              this.$router.go(0)
               // location.href = location.href
             } else {
               this.$message.error(res.error_code + ':' + res.error_message)
@@ -71,6 +71,10 @@ export default {
   },
   created () {
     // this.$emit('publicShow', false)
+    let userInfo = this.$cookies.get('userInfo')
+    if (userInfo && userInfo.access_token) {
+      this.$router.go(-1)
+    }
   }
 }
 
