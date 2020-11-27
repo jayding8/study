@@ -68,8 +68,8 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <span title="编辑" @click="editLog(scope.row)" v-if="selected == 'user_warning'">编辑</span>
-                <span title="删除" @click="delLog(scope.$index, scope.row)">删除</span>
+                <span title="编辑" @click="editLog(scope.row)" v-if="selected == 'user_warning'" style="cursor: pointer;">编辑</span>
+                <span title="删除" @click="delLog(scope.$index, scope.row)" style="cursor: pointer;">删除</span>
               </template>
             </el-table-column>
           </el-table>
