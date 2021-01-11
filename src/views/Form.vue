@@ -86,6 +86,8 @@
             </el-form>
           </template>
         </el-table-column>
+        <el-table-column label="序号" type="index">
+        </el-table-column>
         <el-table-column label="代码" prop="bond_id" sortable>
         </el-table-column>
         <el-table-column label="名称" prop="bond_nm" sortable>
