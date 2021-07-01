@@ -25,30 +25,36 @@
       </div>
       <div class="home-content-right">
         <div class="home-content-right-nav">
-            <el-button type="primary" size="mini" @click="dialogFormVisible = true">新增</el-button>
-            <el-dialog title="新增日志" :visible.sync="dialogFormVisible">
-              <el-form :model="form">
-                <el-form-item label="代码 *" :label-width="formLabelWidth">
-                  <el-input v-model="form.type" autocomplete="off" placeholder="eg:110072"></el-input>
-                </el-form-item>
-                <el-form-item label="名称" :label-width="formLabelWidth">
-                  <el-input v-model="form.type_name" autocomplete="off" placeholder="eg:广汇转债"></el-input>
-                </el-form-item>
-                <el-form-item label="价格涨到" :label-width="formLabelWidth" v-if="selected == 'user_warning'">
-                  <el-input v-model="form.up" autocomplete="off" placeholder="eg:100.67"></el-input>
-                </el-form-item>
-                <el-form-item label="价格跌到" :label-width="formLabelWidth" v-if="selected == 'user_warning'">
-                  <el-input v-model="form.down" autocomplete="off" placeholder="eg:98.99"></el-input>
-                </el-form-item>
-                <el-form-item label="涨跌幅(%)" :label-width="formLabelWidth" v-if="selected == 'user_warning'">
-                  <el-input v-model="form.percent" autocomplete="off" placeholder="eg:8"></el-input>
-                </el-form-item>
-              </el-form>
-              <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addLogs">确 定</el-button>
-              </div>
-            </el-dialog>
+          <div>
+            <el-upload class="upload-demo" action="/api/logs/excel/import" :on-success="uploadBack" :show-file-list=false style="float: left;">
+              <el-button size="small" type="primary">Excel上传</el-button>
+            </el-upload>
+            <el-button type="primary" size="mini" @click="dialogFormVisible = true" style="float: right; height: 32px;margin-left:5px">新增</el-button>
+          </div>
+
+          <el-dialog title="新增日志" :visible.sync="dialogFormVisible">
+            <el-form :model="form">
+              <el-form-item label="代码 *" :label-width="formLabelWidth">
+                <el-input v-model="form.type" autocomplete="off" placeholder="eg:110072"></el-input>
+              </el-form-item>
+              <el-form-item label="名称" :label-width="formLabelWidth">
+                <el-input v-model="form.type_name" autocomplete="off" placeholder="eg:广汇转债"></el-input>
+              </el-form-item>
+              <el-form-item label="价格涨到" :label-width="formLabelWidth" v-if="selected == 'user_warning'">
+                <el-input v-model="form.up" autocomplete="off" placeholder="eg:100.67"></el-input>
+              </el-form-item>
+              <el-form-item label="价格跌到" :label-width="formLabelWidth" v-if="selected == 'user_warning'">
+                <el-input v-model="form.down" autocomplete="off" placeholder="eg:98.99"></el-input>
+              </el-form-item>
+              <el-form-item label="涨跌幅(%)" :label-width="formLabelWidth" v-if="selected == 'user_warning'">
+                <el-input v-model="form.percent" autocomplete="off" placeholder="eg:8"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="addLogs">确 定</el-button>
+            </div>
+          </el-dialog>
         </div>
         <div class="home-content-right-table">
           <el-table :data="tableData" empty-text="暂无相关数据">
@@ -148,6 +154,14 @@ export default {
           return false
         }
       })
+    },
+    uploadBack (res, file) {
+      if (res.error_code === 0) {
+        this.$message({showClose: true, type: 'success', message: '上传 ' + file.name + ' 成功'})
+      } else {
+        this.$message({showClose: true, type: 'error', message: res.error_message})
+        return false
+      }
     }
   },
   created () {
