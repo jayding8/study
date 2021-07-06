@@ -58,20 +58,14 @@
         </div>
         <div class="home-content-right-table">
           <el-table :data="tableData" empty-text="暂无相关数据">
-            <el-table-column prop="type" label="代码">
-            </el-table-column>
-            <el-table-column prop="type_name" label="名称">
-            </el-table-column>
-            <el-table-column prop="op_name" label="操作类型">
-            </el-table-column>
-            <el-table-column prop="warning.up" label="涨到" v-if="selected == 'user_warning'">
-            </el-table-column>
-            <el-table-column prop="warning.down" label="跌倒" v-if="selected == 'user_warning'">
-            </el-table-column>
-            <el-table-column prop="warning.percent" label="涨跌幅" v-if="selected == 'user_warning'">
-            </el-table-column>
-            <el-table-column prop="created_at" label="添加时间">
-            </el-table-column>
+            <el-table-column type="index" label="序号" width="50"></el-table-column>
+            <el-table-column prop="type" label="代码"></el-table-column>
+            <el-table-column prop="type_name" label="名称"></el-table-column>
+            <el-table-column prop="op_name" label="操作类型"></el-table-column>
+            <el-table-column prop="warning.up" label="涨到" v-if="selected == 'user_warning'"></el-table-column>
+            <el-table-column prop="warning.down" label="跌倒" v-if="selected == 'user_warning'"></el-table-column>
+            <el-table-column prop="warning.percent" label="涨跌幅" v-if="selected == 'user_warning'"></el-table-column>
+            <el-table-column prop="created_at" label="添加时间"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <span title="编辑" @click="editLog(scope.row)" v-if="selected == 'user_warning'" style="cursor: pointer;">编辑</span>
